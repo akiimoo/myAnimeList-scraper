@@ -3,16 +3,6 @@ import requests
 import time
 import getUserAgent
 
-genresPages = []
-def scrapMyAnimeList():
-    response = requests.get('https://myanimelist.net/anime.php')
-    soup = BeautifulSoup(response.text, 'html.parser')
-    genre_link = soup.find_all('div', class_="genre-link")
-    for i in genre_link[0]:
-        links = i.find_all('div', class_="genre-list al")
-        for link in links:
-            genresPages.append(link.find('a').get('href'))
-
 headers = {
     'user-agent': getUserAgent.getAgent()
 }
@@ -23,8 +13,16 @@ proxies = {
 
 animes = []
 covers = []
+genresPages = []
 
-scrapMyAnimeList()
+response = requests.get('https://myanimelist.net/anime.php')
+soup = BeautifulSoup(response.text, 'html.parser')
+genre_link = soup.find_all('div', class_="genre-link")
+for i in genre_link[0]:
+    links = i.find_all('div', class_="genre-list al")
+    for link in links:
+        genresPages.append(link.find('a').get('href'))
+
 for genre in genresPages:
     for page in range(50):
         try:
@@ -57,4 +55,5 @@ for genre in genresPages:
             time.sleep(4)
 
         except Exception as e:
+
             print(e)
